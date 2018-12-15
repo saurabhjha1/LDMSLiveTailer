@@ -19,6 +19,10 @@
 ```shell
 ./linkcomputation.py --logfile /tmp/test --headerfile ../../metric_set_rtr_3_2_s.HEADER.1498195310 --tilelist 0_2,2_5
 ```
+##### enable max mode
+```shell
+./linkcomputation.py --logfile /tmp/testrtr.csv --headerfile ../../metric_set_rtr_3_2_s.HEADER.1498195310 --enable_max_mode
+```
 
 ## NIC COMPUTATION
 ### Notes
