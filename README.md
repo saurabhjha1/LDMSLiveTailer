@@ -1,10 +1,14 @@
 # Live Tailing of LDMS Data
 
-## Notes
-* Never put space between commas of python arguments for these programs
-
 ## LINK COMPUTATION
 ------
+### Notes
+* --logfile : rtr file
+* --headerfile: header file
+* --nidlist: tile list separated by commas. Tiles are given in the form of r_c
+* Never put space between commas of python arguments for these programs
+
+
 /tmp/test is either a nic file or an rtr file that is generated through test/test.py to emulate live behavior
 ##### all links
 ```shell
@@ -16,6 +20,14 @@
 ```
 
 ## NIC COMPUTATION
+### Notes
+* --logfile : nic file
+* --headerfile: header file
+* --nidlist: node list separated by commas
+* Never put space between commas of python arguments for these programs
+
+
+
 ##### all nodes in the file
 ```shell
 ./niccomputation.py --logfile /tmp/test --headerfile ../../metric_set_nic.HEADER.1496978510
