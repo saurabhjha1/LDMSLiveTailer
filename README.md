@@ -6,6 +6,7 @@
 * --logfile : rtr file
 * --headerfile: header file
 * --nidlist: tile list separated by commas. Tiles are given in the form of r_c
+* --enable_max_mode : enables printing of only max per aries per measurement epoch. no argument required
 * Never put space between commas of python arguments for these programs
 
 

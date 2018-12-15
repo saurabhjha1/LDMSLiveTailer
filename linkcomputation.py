@@ -13,13 +13,12 @@ import itertools
 # header 
 # Time,Time_usec,ProducerName,component_id,job_id,aries_rtr_id
 
-
-
 ## global variables
 aries_metric_deltas = {}
 aries_metric_prev = {}
 aries_ts_prev = {}
 aries_out_metrics = {}
+enable_max_mode = False
 metrics = {
 }
 curr_time = 0
@@ -30,7 +29,7 @@ tiles = []
 
 def func():
 # function that handles new log line
-	global metrics, aries_metric_deltas, aries_metric_prev, aries_ts_prev, curr_time, aries_out_metrics, tiles
+	global metrics, aries_metric_deltas, aries_metric_prev, aries_ts_prev, curr_time, aries_out_metrics, tiles, enable_max_mode
 	cols = tailq.get().strip().decode('unicode-escape').split(',')
 	aries_id = cols[6]
 	tcurr = int(cols[0].split('.')[0])
@@ -58,7 +57,6 @@ def func():
 			dt = tcurr - aries_ts_prev[aries_id]
 			aries_out_metrics[aries_id]["dt"] = dt
 			aries_out_metrics[aries_id]["nid"] = cols[2]
-                        
 			# df/dt
 			r_c  = list(itertools.product(range(5), range(8)))
 			for m in r_c:
@@ -78,20 +76,26 @@ def func():
 						safe_div(aries_metric_deltas[aries_id] ["AR_RTR_{}_{}_INQ_PRF_ROWBUS_STALL_CNT".format(m[0], m[1])], rc_sum)
 	aries_ts_prev[aries_id] = tcurr
 	if curr_time < tcurr:
-#		if len(tiles) > 0:
-#			arr = numpy.array([[nic_out_metrics[nid][mKey] for mKey in sorted(nic_out_metrics[nid])] for nid in sorted(nic_out_metrics) if nid in nodes])
-#			arr1 = numpy.array([[nic_metric_deltas[nid][mKey] for mKey in sorted(nic_metric_deltas[nid])] for nid in sorted(nic_metric_deltas) if nid in nodes])
-#		else:
-#			arr = numpy.array([[nic_out_metrics[nid][mKey] for mKey in sorted(nic_out_metrics[nid])] for nid in sorted(nic_out_metrics)])
+		print_tiles = tiles
 		for aries_id in aries_out_metrics:
 			print("time", "nid", "aries_id", "dt", "tile", "df", "ds", "s2f")
 			if len(tiles) == 0:
+				print_tiles = list(itertools.product(range(5), range(8)))
+			if enable_max_mode:
 				tiles = list(itertools.product(range(5), range(8)))
-			for tile in tiles:
+				max_tile = []
+				max_val = -4873849738
+				for tile in tiles:
+					val = int(aries_out_metrics[aries_id]["df_{}_{}".format(tile[0], tile[1])])
+					if val >= max_val:
+						max_tile = tile
+						max_val = val
+				print_tiles = [max_tile]
+			for tile in print_tiles:
 				print(
 					tcurr,
-                                        aries_out_metrics[aries_id]["nid"],
-                                        aries_id, aries_out_metrics[aries_id]["dt"],
+					aries_out_metrics[aries_id]["nid"],
+					aries_id, aries_out_metrics[aries_id]["dt"],
 					str(tile[0]) + "_" + str(tile[1]), 
 					aries_out_metrics[aries_id]["df_{}_{}".format(tile[0], tile[1])],
 					aries_out_metrics[aries_id]["ds_{}_{}".format(tile[0], tile[1])],
@@ -102,7 +106,7 @@ def func():
 
 
 def main():
-	global metrics, tiles
+	global metrics, tiles, enable_max_mode
 	# initialize metrics, i.e., which metrics do we want
 	r_c_vc = itertools.product(range(5), range(8), range(8))
 	for m in r_c_vc:
@@ -115,7 +119,10 @@ def main():
 	parser.add_argument("--logfile")
 	parser.add_argument("--headerfile")
 	parser.add_argument("--tilelist", required = False)
+	parser.add_argument("--enable_max_mode", required = False, action="store_true")
 	args = parser.parse_args()
+	if args.enable_max_mode:
+		enable_max_mode = True
 	# parse header
 	header_line = ""
 	with open(args.headerfile) as hfh:
