@@ -44,6 +44,7 @@ def func():
 			aries_out_metrics[aries_id]["ds_{}_{}".format(m[0], m[1])] = 0.0
 			aries_out_metrics[aries_id]["s2f_{}_{}".format(m[0], m[1])] = 0.0
 		aries_out_metrics[aries_id]["dt"] = 0.0
+                aries_out_metrics[aries_id]["nid"] = ""
 		aries_ts_prev[aries_id]  =  0
 		curr_time = tcurr
 	else:
@@ -56,6 +57,8 @@ def func():
 			# dt
 			dt = tcurr - aries_ts_prev[aries_id]
 			aries_out_metrics[aries_id]["dt"] = dt
+			aries_out_metrics[aries_id]["nid"] = cols[2]
+                        
 			# df/dt
 			r_c  = list(itertools.product(range(5), range(8)))
 			for m in r_c:
@@ -81,12 +84,14 @@ def func():
 #		else:
 #			arr = numpy.array([[nic_out_metrics[nid][mKey] for mKey in sorted(nic_out_metrics[nid])] for nid in sorted(nic_out_metrics)])
 		for aries_id in aries_out_metrics:
-			print("time", "aries_id", "dt", "tile", "df", "ds", "s2f")
+			print("time", "nid", "aries_id", "dt", "tile", "df", "ds", "s2f")
 			if len(tiles) == 0:
 				tiles = list(itertools.product(range(5), range(8)))
 			for tile in tiles:
 				print(
-					tcurr, aries_id, aries_out_metrics[aries_id]["dt"],
+					tcurr,
+                                        aries_out_metrics[aries_id]["nid"],
+                                        aries_id, aries_out_metrics[aries_id]["dt"],
 					str(tile[0]) + "_" + str(tile[1]), 
 					aries_out_metrics[aries_id]["df_{}_{}".format(tile[0], tile[1])],
 					aries_out_metrics[aries_id]["ds_{}_{}".format(tile[0], tile[1])],
