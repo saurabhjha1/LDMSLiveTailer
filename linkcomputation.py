@@ -32,7 +32,7 @@ def func():
 # function that handles new log line
 	global metrics, aries_metric_deltas, aries_metric_prev, aries_ts_prev, curr_time, aries_out_metrics, tiles
 	cols = tailq.get().strip().decode('unicode-escape').split(',')
-	aries_id = cols[5]
+	aries_id = cols[6]
 	tcurr = int(cols[0].split('.')[0])
 	if aries_id not in aries_metric_deltas:
 		aries_metric_deltas[aries_id] = copy.deepcopy(metrics)
