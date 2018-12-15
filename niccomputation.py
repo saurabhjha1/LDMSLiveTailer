@@ -39,11 +39,12 @@ def func():
 	numeric_index_start = nId = 6
 	cols = tailq.get().strip().decode('unicode-escape').split(',')
 	nid = cols[2]
+        aries_id = cols[6]
 	tcurr = int(cols[0].split('.')[0])
 	if nid not in nic_metric_deltas:
 		nic_metric_deltas[nid] = copy.deepcopy(metrics)
 		nic_metric_prev[nid] = copy.deepcopy(metrics)
-		nic_out_metrics[nid] = {"dt":0, "df":0, "ds":0, "s2f":0, "dpif":0, "dprocs":0, "n2p":0, "hpg":0}
+		nic_out_metrics[nid] = {"aries_id": "", "dt":0, "df":0, "ds":0, "s2f":0, "dpif":0, "dprocs":0, "n2p":0, "hpg":0}
 		nic_ts_prev[nid]  =  0
 		curr_time = tcurr
 	else:
@@ -55,6 +56,7 @@ def func():
 			# format output
 			# dt
 			dt = tcurr - nic_ts_prev[nid]
+			nic_out_metrics[nid]["aries_id"] = aries_id
 			nic_out_metrics[nid]["dt"] = dt
 			# df/dt
 			nic_out_metrics[nid]["df"] = safe_div(nic_metric_deltas[nid]["AR_NIC_NETMON_ORB_EVENT_CNTR_REQ_STALLED"], dt)
@@ -77,13 +79,14 @@ def func():
 #			arr1 = numpy.array([[nic_metric_deltas[nid][mKey] for mKey in sorted(nic_metric_deltas[nid])] for nid in sorted(nic_metric_deltas) if nid in nodes])
 #		else:
 #			arr = numpy.array([[nic_out_metrics[nid][mKey] for mKey in sorted(nic_out_metrics[nid])] for nid in sorted(nic_out_metrics)])
-		print("time", "nid", "dt", "df", "ds", "s2f", "dpif", "dprocs", "n2p", "hpg")
+		print("time", "nid", "aries_id", "dt", "df", "ds", "s2f", "dpif", "dprocs", "n2p", "hpg")
 		if len(nodes) == 0:
 			nodes = nic_out_metrics.keys()
 		for nid in nodes:
 			print(
 				tcurr, 
 				nid,
+                                nic_out_metrics[nid]["aries_id"],
 				nic_out_metrics[nid]["dt"],
 				nic_out_metrics[nid]["df"],
 				nic_out_metrics[nid]["ds"],
