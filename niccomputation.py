@@ -78,14 +78,14 @@ def func():
 #			arr1 = numpy.array([[nic_metric_deltas[nid][mKey] for mKey in sorted(nic_metric_deltas[nid])] for nid in sorted(nic_metric_deltas) if nid in nodes])
 #		else:
 #			arr = numpy.array([[nic_out_metrics[nid][mKey] for mKey in sorted(nic_out_metrics[nid])] for nid in sorted(nic_out_metrics)])
-		print("time", "nid", "aries_id", "dt", "df", "ds", "s2f", "dpif", "dprocs", "n2p", "hpg")
+		print("time".ljust(8), "nid".ljust(3), "aries_id".ljust(10), "dt", "df", "ds", "s2f", "dpif", "dprocs", "n2p", "hpg")
 		if len(nodes) == 0:
 			nodes = nic_out_metrics.keys()
 		for nid in nodes:
-			print(
+			print("{}, {}, {}, {:.2e}, {:.2e}, {:.2e}, {:.2e},{:.2e}, {:.2e}, {:.2e}, {:.2e}".format(
 				tcurr, 
 				nid,
-                                nic_out_metrics[nid]["aries_id"],
+				nic_out_metrics[nid]["aries_id"].ljust(10),
 				nic_out_metrics[nid]["dt"],
 				nic_out_metrics[nid]["df"],
 				nic_out_metrics[nid]["ds"],
@@ -94,7 +94,8 @@ def func():
 				nic_out_metrics[nid]["dprocs"],
 				nic_out_metrics[nid]["n2p"],
 				nic_out_metrics[nid]["hpg"]
-			)
+				)
+		)
 		curr_time = tcurr
 	return
 
