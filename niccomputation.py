@@ -39,7 +39,7 @@ def func():
 	numeric_index_start = nId = 6
 	cols = tailq.get().strip().decode('unicode-escape').split(',')
 	nid = cols[2]
-        aries_id = cols[6]
+	aries_id = cols[6]
 	tcurr = int(cols[0].split('.')[0])
 	if nid not in nic_metric_deltas:
 		nic_metric_deltas[nid] = copy.deepcopy(metrics)
@@ -52,18 +52,17 @@ def func():
 			for mKey in metrics:
 				nic_metric_deltas[nid][mKey] = int(cols[metrics[mKey]]) - nic_metric_prev[nid][mKey]
 				nic_metric_prev[nid][mKey] = int(cols[metrics[mKey]])
-			
 			# format output
 			# dt
 			dt = tcurr - nic_ts_prev[nid]
 			nic_out_metrics[nid]["aries_id"] = aries_id
 			nic_out_metrics[nid]["dt"] = dt
 			# df/dt
-			nic_out_metrics[nid]["df"] = safe_div(nic_metric_deltas[nid]["AR_NIC_NETMON_ORB_EVENT_CNTR_REQ_STALLED"], dt)
+			nic_out_metrics[nid]["ds"] = safe_div(nic_metric_deltas[nid]["AR_NIC_NETMON_ORB_EVENT_CNTR_REQ_STALLED"], dt)
 			# ds/dt
-			nic_out_metrics[nid]["ds"] = safe_div(nic_metric_deltas[nid]["AR_NIC_NETMON_ORB_EVENT_CNTR_REQ_FLITS"], dt)
+			nic_out_metrics[nid]["df"] = safe_div(nic_metric_deltas[nid]["AR_NIC_NETMON_ORB_EVENT_CNTR_REQ_FLITS"], dt)
 			#  s2f
-			nic_out_metrics[nid]["s2f"] = safe_div(nic_metric_deltas[nid]["AR_NIC_NETMON_ORB_EVENT_CNTR_REQ_FLITS"], nic_metric_deltas[nid]["AR_NIC_NETMON_ORB_EVENT_CNTR_REQ_STALLED"])
+			nic_out_metrics[nid]["s2f"] = safe_div(nic_metric_deltas[nid]["AR_NIC_NETMON_ORB_EVENT_CNTR_REQ_STALLED"], nic_metric_deltas[nid]["AR_NIC_NETMON_ORB_EVENT_CNTR_REQ_FLIT"])
 			# dprocs/dt
 			nic_out_metrics[nid]["dprocs"] = safe_div(nic_metric_deltas[nid]["AR_NIC_RSPMON_PARB_EVENT_CNTR_PI_STALLED"], dt)
 			# dpif/dt
