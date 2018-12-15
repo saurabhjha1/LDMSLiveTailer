@@ -35,7 +35,7 @@ nodes = []
 
 def func():
 # function that handles new log line
-	global metrics, nic_metric_deltas, nic_metric_prev, nic_ts_prev, curr_time, nic_out_metrics
+	global metrics, nic_metric_deltas, nic_metric_prev, nic_ts_prev, curr_time, nic_out_metrics, nodes
 	numeric_index_start = nId = 6
 	cols = tailq.get().strip().decode('unicode-escape').split(',')
 	nid = cols[2]
@@ -43,7 +43,7 @@ def func():
 	if nid not in nic_metric_deltas:
 		nic_metric_deltas[nid] = copy.deepcopy(metrics)
 		nic_metric_prev[nid] = copy.deepcopy(metrics)
-		nic_out_metrics[nid] = {"s2f":0, "n2p":0, "hpg":0}
+		nic_out_metrics[nid] = {"dt":0, "df":0, "ds":0, "s2f":0, "dpif":0, "dprocs":0, "n2p":0, "hpg":0}
 		nic_ts_prev[nid]  =  0
 		curr_time = tcurr
 	else:
@@ -51,22 +51,48 @@ def func():
 			for mKey in metrics:
 				nic_metric_deltas[nid][mKey] = int(cols[metrics[mKey]]) - nic_metric_prev[nid][mKey]
 				nic_metric_prev[nid][mKey] = int(cols[metrics[mKey]])
-				#  s2f
-				nic_out_metrics[nid]["s2f"] = safe_div(nic_metric_deltas[nid]["AR_NIC_NETMON_ORB_EVENT_CNTR_REQ_FLITS"], nic_metric_deltas[nid]["AR_NIC_NETMON_ORB_EVENT_CNTR_REQ_STALLED"])
-				#  n2p
-				nic_out_metrics[nid]["n2p"] = safe_div(nic_metric_deltas[nid]["AR_NIC_RSPMON_PARB_EVENT_CNTR_PI_STALLED"], nic_metric_deltas[nid]["AR_NIC_RSPMON_PARB_EVENT_CNTR_PI_FLITS"])
-				#  hpg
-				nic_out_metrics[nid]["hpg"] = safe_div(nic_metric_deltas[nid]["AR_NIC_RSPMON_PARB_EVENT_CNTR_IOMMU_PKTS"], nic_metric_deltas[nid] ["AR_NIC_RSPMON_PARB_EVENT_CNTR_PI_PKTS"])
+			
+			# format output
+			# dt
+			dt = tcurr - nic_ts_prev[nid]
+			nic_out_metrics[nid]["dt"] = dt
+			# df/dt
+			nic_out_metrics[nid]["df"] = safe_div(nic_metric_deltas[nid]["AR_NIC_NETMON_ORB_EVENT_CNTR_REQ_STALLED"], dt)
+			# ds/dt
+			nic_out_metrics[nid]["ds"] = safe_div(nic_metric_deltas[nid]["AR_NIC_NETMON_ORB_EVENT_CNTR_REQ_FLITS"], dt)
+			#  s2f
+			nic_out_metrics[nid]["s2f"] = safe_div(nic_metric_deltas[nid]["AR_NIC_NETMON_ORB_EVENT_CNTR_REQ_FLITS"], nic_metric_deltas[nid]["AR_NIC_NETMON_ORB_EVENT_CNTR_REQ_STALLED"])
+			# dprocs/dt
+			nic_out_metrics[nid]["dprocs"] = safe_div(nic_metric_deltas[nid]["AR_NIC_RSPMON_PARB_EVENT_CNTR_PI_STALLED"], dt)
+			# dpif/dt
+			nic_out_metrics[nid]["dpif"] = safe_div(nic_metric_deltas[nid]["AR_NIC_RSPMON_PARB_EVENT_CNTR_PI_FLITS"], dt)
+			#  n2p
+			nic_out_metrics[nid]["n2p"] = safe_div(nic_metric_deltas[nid]["AR_NIC_RSPMON_PARB_EVENT_CNTR_PI_STALLED"], nic_metric_deltas[nid]["AR_NIC_RSPMON_PARB_EVENT_CNTR_PI_FLITS"])
+			#  hpg
+			nic_out_metrics[nid]["hpg"] = safe_div(nic_metric_deltas[nid]["AR_NIC_RSPMON_PARB_EVENT_CNTR_IOMMU_PKTS"], nic_metric_deltas[nid] ["AR_NIC_RSPMON_PARB_EVENT_CNTR_PI_PKTS"])
 	nic_ts_prev[nid] = tcurr
 	if curr_time < tcurr:
-		if len(nodes) > 0:
-			arr = numpy.array([[nic_out_metrics[nid][mKey] for mKey in sorted(nic_out_metrics[nid])] for nid in sorted(nic_out_metrics) if nid in nodes])
+#		if len(nodes) > 0:
+#			arr = numpy.array([[nic_out_metrics[nid][mKey] for mKey in sorted(nic_out_metrics[nid])] for nid in sorted(nic_out_metrics) if nid in nodes])
 #			arr1 = numpy.array([[nic_metric_deltas[nid][mKey] for mKey in sorted(nic_metric_deltas[nid])] for nid in sorted(nic_metric_deltas) if nid in nodes])
-		else:
-			arr = numpy.array([[nic_out_metrics[nid][mKey] for mKey in sorted(nic_out_metrics[nid])] for nid in sorted(nic_out_metrics)])
-		print(tcurr)
-		pprint(arr)
-#		print(arr1)
+#		else:
+#			arr = numpy.array([[nic_out_metrics[nid][mKey] for mKey in sorted(nic_out_metrics[nid])] for nid in sorted(nic_out_metrics)])
+		print("time", "nid", "dt", "df", "ds", "s2f", "dpif", "dprocs", "n2p", "hpg")
+		if len(nodes) == 0:
+			nodes = nic_out_metrics.keys()
+		for nid in nodes:
+			print(
+				tcurr, 
+				nid,
+				nic_out_metrics[nid]["dt"],
+				nic_out_metrics[nid]["df"],
+				nic_out_metrics[nid]["ds"],
+				nic_out_metrics[nid]["s2f"],
+				nic_out_metrics[nid]["dpif"],
+				nic_out_metrics[nid]["dprocs"],
+				nic_out_metrics[nid]["n2p"],
+				nic_out_metrics[nid]["hpg"]
+			)
 		curr_time = tcurr
 	return
 
