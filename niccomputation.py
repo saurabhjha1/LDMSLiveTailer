@@ -116,7 +116,14 @@ def main():
 		metrics[mKey] = header.index(mKey)
 	# parse nid list
 	if args.nidlist != None:
-		nodes = args.nidlist.split(",")
+		for nidTuple in args.nidlist.split(","):
+			if '-' in nidTuple:
+				s_nid = int(nidTuple.split('-')[0])
+				s_end = int(nidTuple.split('-')[1]) + 1
+				for nid in range(s_nid, s_end):
+					nodes.append('nid{:0>5d}'.format(nid))
+			else:
+				nodes.append('nid{:0>5d}'.format(int(nidTuple)))
 	# start tailing the logfile
 	tailer = StoppableThread(args.logfile)
 	tailer.start()
