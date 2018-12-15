@@ -80,17 +80,18 @@ def func():
 #			arr1 = numpy.array([[nic_metric_deltas[nid][mKey] for mKey in sorted(nic_metric_deltas[nid])] for nid in sorted(nic_metric_deltas) if nid in nodes])
 #		else:
 #			arr = numpy.array([[nic_out_metrics[nid][mKey] for mKey in sorted(nic_out_metrics[nid])] for nid in sorted(nic_out_metrics)])
-		print("time", "aries_id", "dt", "tile", "df", "ds", "s2f")
-		if len(tiles) == 0:
-			tiles = list(itertools.product(range(5), range(8)))
-		for tile in tiles:
-			print(
-				tcurr, aries_id, aries_out_metrics[aries_id]["dt"],
-				str(tile[0]) + "_" + str(tile[1]), 
-				aries_out_metrics[aries_id]["df_{}_{}".format(tile[0], tile[1])],
-				aries_out_metrics[aries_id]["ds_{}_{}".format(tile[0], tile[1])],
-				aries_out_metrics[aries_id]["s2f_{}_{}".format(tile[0], tile[1])],
-			)
+		for aries_id in aries_out_metrics:
+			print("time", "aries_id", "dt", "tile", "df", "ds", "s2f")
+			if len(tiles) == 0:
+				tiles = list(itertools.product(range(5), range(8)))
+			for tile in tiles:
+				print(
+					tcurr, aries_id, aries_out_metrics[aries_id]["dt"],
+					str(tile[0]) + "_" + str(tile[1]), 
+					aries_out_metrics[aries_id]["df_{}_{}".format(tile[0], tile[1])],
+					aries_out_metrics[aries_id]["ds_{}_{}".format(tile[0], tile[1])],
+					aries_out_metrics[aries_id]["s2f_{}_{}".format(tile[0], tile[1])],
+				)
 		curr_time = tcurr
 	return
 
