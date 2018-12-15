@@ -62,7 +62,7 @@ def func():
 			# ds/dt
 			nic_out_metrics[nid]["df"] = safe_div(nic_metric_deltas[nid]["AR_NIC_NETMON_ORB_EVENT_CNTR_REQ_FLITS"], dt)
 			#  s2f
-			nic_out_metrics[nid]["s2f"] = safe_div(nic_metric_deltas[nid]["AR_NIC_NETMON_ORB_EVENT_CNTR_REQ_STALLED"], nic_metric_deltas[nid]["AR_NIC_NETMON_ORB_EVENT_CNTR_REQ_FLIT"])
+			nic_out_metrics[nid]["s2f"] = safe_div(nic_metric_deltas[nid]["AR_NIC_NETMON_ORB_EVENT_CNTR_REQ_STALLED"], nic_metric_deltas[nid]["AR_NIC_NETMON_ORB_EVENT_CNTR_REQ_FLITS"])
 			# dprocs/dt
 			nic_out_metrics[nid]["dprocs"] = safe_div(nic_metric_deltas[nid]["AR_NIC_RSPMON_PARB_EVENT_CNTR_PI_STALLED"], dt)
 			# dpif/dt
