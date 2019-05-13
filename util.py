@@ -4,11 +4,14 @@ import time
 import subprocess
 import select
 import threading, Queue, subprocess
-tailq = Queue.Queue(maxsize=10000) # buffer at most 100 lines
 
-def safe_div(x,y):
-    if y==0: return 0
-    return x/float(y)
+tailq = Queue.Queue(maxsize=10000)  # buffer at most 100 lines
+
+
+def safe_div(x, y):
+    if y == 0: return 0
+    return x / float(y)
+
 
 class StoppableThread(threading.Thread):
     """Thread class with a stop() method. The thread itself has to check
@@ -24,7 +27,7 @@ class StoppableThread(threading.Thread):
 
     def join(self, *args, **kwargs):
         self.stop()
-        super(StoppableThread,self).join(*args, **kwargs)
+        super(StoppableThread, self).join(*args, **kwargs)
 
     def run(self):
         p = subprocess.Popen(["tail", "-f", self.logfile], stdout=subprocess.PIPE)
@@ -33,4 +36,3 @@ class StoppableThread(threading.Thread):
             tailq.put(line)
         p.terminate()
         print("stopped!")
-
