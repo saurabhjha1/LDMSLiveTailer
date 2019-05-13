@@ -136,6 +136,7 @@ def main():
     # start tailing the logfile
     tailer = StoppableThread(args.logfile)
     tailer.start()
+    print("searching for following nodes: " + str(nodes)) 
     while True:
         try:
             func()

@@ -1,0 +1,2 @@
+python2 ./niccomputation.py --logfile /scratch1/ovis/csv/nid02049/metric_set_nic.1557730800  --headerfile /scratch1/ovis/csv/nid02049/metric_set_nic.1557730800 --nidlist 2667
+python2 ./linkcomputation.py --logfile /scratch1/ovis/csv/nid02049/metric_set_rtr.1557730800 --enable_max_mode --headerfile /scratch1/ovis/csv/nid02049/metric_set_rtr.1557730800 
