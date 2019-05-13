@@ -35,6 +35,7 @@ nodes = []
 # 0     "Time", "CId", "Aries", "dt", "DFH2N", "DSN2H", "DS2FN2H", "DFN2P", "DSN2P", "DS2FN2P", "DHPG"
 
 def func():
+    found_nodes = False
     # function that handles new log line
     global metrics, nic_metric_deltas, nic_metric_prev, nic_ts_prev, curr_time, nic_out_metrics, nodes
     numeric_index_start = nId = 6
@@ -91,22 +92,26 @@ def func():
         if len(nodes) == 0:
             nodes = nic_out_metrics.keys()
         for nid in nodes:
-            print("{}, {}, {}, {:.2e}, {:.2e}, {:.2e}, {:.2e},{:.2e}, {:.2e}, {:.2e}, {:.2e}".format(
-                tcurr,
-                nid,
-                nic_out_metrics[nid]["aries_id"].ljust(10),
-                nic_out_metrics[nid]["dt"],
-                nic_out_metrics[nid]["df"],
-                nic_out_metrics[nid]["ds"],
-                nic_out_metrics[nid]["s2f"],
-                nic_out_metrics[nid]["dpif"],
-                nic_out_metrics[nid]["dprocs"],
-                nic_out_metrics[nid]["n2p"],
-                nic_out_metrics[nid]["hpg"]
-            )
-            )
+            if nid not in nic_out_metrics:
+                continue
+            else:
+                found_nodes = True
+                print("{}, {}, {}, {:.2e}, {:.2e}, {:.2e}, {:.2e},{:.2e}, {:.2e}, {:.2e}, {:.2e}".format(
+                   tcurr,
+                   nid,
+                   nic_out_metrics[nid]["aries_id"].ljust(10),
+                   nic_out_metrics[nid]["dt"],
+                   nic_out_metrics[nid]["df"],
+                   nic_out_metrics[nid]["ds"],
+                   nic_out_metrics[nid]["s2f"],
+                   nic_out_metrics[nid]["dpif"],
+                   nic_out_metrics[nid]["dprocs"],
+                   nic_out_metrics[nid]["n2p"],
+                   nic_out_metrics[nid]["hpg"]
+                   )
+                )
         curr_time = tcurr
-    return
+    return found_nodes
 
 
 def main():
@@ -137,9 +142,18 @@ def main():
     tailer = StoppableThread(args.logfile)
     tailer.start()
     print("searching for following nodes: " + str(nodes)) 
+    not_found = 0
     while True:
         try:
-            func()
+            found_nodes = func()
+            if found_nodes == False:
+               not_found +=1 
+            else:
+               not_found = 0
+            if not_found > 2000:
+               tailer.stop()
+               print("did not find node in logfile")
+               sys.exit(0)
         except KeyboardInterrupt:
             tailer.stop()
             print("keyboard interrupt occurred")
